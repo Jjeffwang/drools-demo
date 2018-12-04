@@ -1,0 +1,76 @@
+package com.order
+//package只做逻辑上的区分
+import com.learn.droolsdemo.domain.Order
+import com.learn.droolsdemo.domain.User
+import com.learn.droolsdemo.domain.Result
+global java.util.List myGlobalList
+
+rule "less than 100"
+dialect "java"
+no-loop true            //只检查一次
+lock-on-active true //no-loop的增强  避免已经被执行的规则再次被执行（update函数会跟新）
+salience 8    //值越大 ，优先级越高
+when
+$o:Order(amount<=100&&user.userType!="vip")
+$result:Result()
+then
+$o.getUser().setUserScore(0);
+$result.setCheckResult(true);
+myGlobalList.add("this is global test");
+update($o);
+System.out.println("规则less than 100：校验通过!");
+end
+
+
+rule "less than 50"
+dialect "java"
+no-loop true            //只检查一次
+lock-on-active true //no-loop的增强  避免已经被执行的规则再次被执行
+salience 2    //值越大 ，优先级越高
+when
+$o:Order(amount<=50&&user.userType!="vip")
+$result:Result()
+then
+$o.getUser().setUserScore(0);
+$result.setCheckResult(true);
+myGlobalList.add("this is global test");
+update($o);
+System.out.println("规则less than 50：校验通过!");
+end
+
+
+rule "more than 500 and vip"
+dialect "java"
+no-loop true
+lock-on-active true
+salience 8
+when
+$o:Order(amount>=500&&user.userType=="vip")
+$result:Result()
+then
+$o.getUser().setUserScore(100);
+$result.setCheckResult(true);
+myGlobalList.add(hello(" demo"));
+
+update($o)
+//modify($result){checkResult==true}
+System.out.println("规则中打印日志：校验通过!");
+end
+
+
+
+rule "test int"
+dialect "java"
+when
+$order:Order()
+not Order(amount<$order.amount)
+then
+ System.out.println("Number found with value: " + $order.getAmount() );
+        retract( $order );
+ end
+
+
+function  String hello(String name){
+return "hello "+ name;
+}
+
