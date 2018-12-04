@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,9 @@ public class TestController {
         Message message = new Message();
         message.setMessage("Hello World");
         message.setStatus(Message.HELLO);
+        System.setProperty("drools.dateformat","yyyy-MM-dd HH:MM");
         KieSession kieSession = kieContainer.newKieSession();
+        kieSession.getAgenda().getActivationGroup("order-group");
         kieSession.insert(message);
         int ruleFiredCount = kieSession.fireAllRules();
         kieSession.destroy();
