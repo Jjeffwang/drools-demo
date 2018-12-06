@@ -74,3 +74,11 @@ function  String hello(String name){
 return "hello "+ name;
 }
 
+
+rule "test-date-effective"
+date-effective "2018-12-08"
+when
+then
+ System.out.println("date effective");
+ end
+

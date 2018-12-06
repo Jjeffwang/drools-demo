@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DroolsDemoApplication {
 
     public static void main(String[] args) {
+        System.setProperty("drools.dateformat","yyyy-MM-dd");
+
         SpringApplication.run(DroolsDemoApplication.class, args);
     }
 }

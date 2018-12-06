@@ -31,10 +31,10 @@ public class TestController {
         Message message = new Message();
         message.setMessage("Hello World");
         message.setStatus(Message.HELLO);
-        System.setProperty("drools.dateformat","yyyy-MM-dd HH:MM");
+
         KieSession kieSession = kieContainer.newKieSession();
-        kieSession.getAgenda().getActivationGroup("order-group");
         kieSession.insert(message);
+        kieSession.getAgenda().getAgendaGroup("message-group").setFocus();
         int ruleFiredCount = kieSession.fireAllRules();
         kieSession.destroy();
         System.out.println("触发了" + ruleFiredCount + "条规则");
