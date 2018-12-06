@@ -44,11 +44,10 @@ public class DroolsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(KieContainer.class)
     public KieContainer kieContainer() throws IOException {
-        final KieRepository kieRepository = getKieServices().getRepository();
-
+        KieServices kieServices=getKieServices();
+        final KieRepository kieRepository = kieServices.getRepository();
         kieRepository.addKieModule(kieRepository::getDefaultReleaseId);
-
-        KieBuilder kieBuilder = getKieServices().newKieBuilder(kieFileSystem());
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem());
         kieBuilder.buildAll();
 
         return getKieServices().newKieContainer(kieRepository.getDefaultReleaseId());

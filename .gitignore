@@ -1,0 +1,6 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+drools-demo.iml
+src/main/resources/static/
+src/main/resources/templates/
+target/
