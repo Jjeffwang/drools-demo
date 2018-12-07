@@ -1,0 +1,7 @@
+server:
+  servlet:
+   contextPath: /drools
+  port: 8088
+
+drools:
+  rule: rules/

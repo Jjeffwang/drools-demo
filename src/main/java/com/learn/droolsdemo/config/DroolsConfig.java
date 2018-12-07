@@ -20,12 +20,11 @@ import java.io.IOException;
 
 /**
  * @Author: chengyong.wang
- * @Date: 2018/9/30 上午10:06
- * @Description: drools config
+ * @Date: 2018/12/7 下午3:28
+ * @Description:
  */
 @Configuration
-public class DroolsAutoConfiguration {
-
+public class DroolsConfig {
     @Value("${drools.rule:#{rules}}")
     public   String RULES_PATH;
 
@@ -37,49 +36,25 @@ public class DroolsAutoConfiguration {
         return new Thread();
     }
 
-    @Bean
-    public KieFileSystem kieFileSystem() throws IOException {
-        KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
-        for (Resource file : getRuleFiles()) {
-            kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
-        }
-        return kieFileSystem;
-    }
+
+
+
 
     @Bean
     public Resource[] getRuleFiles() throws IOException {
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-        return resourcePatternResolver.getResources("classpath*:" + RULES_PATH + "/**/*.drl");
+        System.out.println(RULES_PATH);
+        return resourcePatternResolver.getResources("classpath*: /**/*.drl");
     }
 
-    @Bean
-    public KieContainer kieContainer() throws IOException {
-        KieServices kieServices =  getKieServices();
-        final KieRepository kieRepository = kieServices.getRepository();
-        kieRepository.addKieModule(kieRepository::getDefaultReleaseId);
-        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem());
-        Results results = kieBuilder.getResults();
-        if (results.hasMessages(Message.Level.ERROR)) {
-            LOGGER.error("fireRuleError", results.getMessages());
-        }
-        kieBuilder.buildAll();
-        return kieServices.newKieContainer(kieRepository.getDefaultReleaseId());
-    }
+
 
     private KieServices getKieServices() {
 
         return KieServices.Factory.get();
     }
 
-    @Bean
-    public KieBase kieBase() throws IOException {
-        return kieContainer().getKieBase();
-    }
 
-    @Bean
-    public KieSession kieSession() throws IOException {
-        return kieContainer().newKieSession();
-    }
 
     @Bean
     public KModuleBeanFactoryPostProcessor kiePostProcessor() {
