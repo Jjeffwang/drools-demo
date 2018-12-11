@@ -26,22 +26,15 @@ import java.io.IOException;
 @Configuration
 public class DroolsAutoConfiguration {
 
-    @Value("${drools.rule:#{rules}}")
-    public   String RULES_PATH;
+    public String RULES_PATH;
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(DroolsAutoConfiguration.class);
-
-    @Bean
-    public Thread mythread() {
-        System.out.println(RULES_PATH);
-        return new Thread();
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(DroolsAutoConfiguration.class);
 
     @Bean
     public KieFileSystem kieFileSystem() throws IOException {
         KieFileSystem kieFileSystem = getKieServices().newKieFileSystem();
         for (Resource file : getRuleFiles()) {
-            kieFileSystem.write(ResourceFactory.newClassPathResource(RULES_PATH + file.getFilename(), "UTF-8"));
+            kieFileSystem.write(ResourceFactory.newClassPathResource(getRULES_PATH(RULES_PATH) + file.getFilename(), "UTF-8"));
         }
         return kieFileSystem;
     }
@@ -49,12 +42,17 @@ public class DroolsAutoConfiguration {
     @Bean
     public Resource[] getRuleFiles() throws IOException {
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-        return resourcePatternResolver.getResources("classpath*:" + RULES_PATH + "/**/*.drl");
+        return resourcePatternResolver.getResources("classpath*:" + getRULES_PATH(RULES_PATH) + "/**/*.drl");
+    }
+
+    @Bean
+    public String getRULES_PATH(@Value("${drools.rule:#{rules}}") String RULES_PATH) {
+        return RULES_PATH;
     }
 
     @Bean
     public KieContainer kieContainer() throws IOException {
-        KieServices kieServices =  getKieServices();
+        KieServices kieServices = getKieServices();
         final KieRepository kieRepository = kieServices.getRepository();
         kieRepository.addKieModule(kieRepository::getDefaultReleaseId);
         KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem());
